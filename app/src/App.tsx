@@ -3,15 +3,14 @@ import { useState, useEffect } from "react";
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  let result = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("status="))
+    ?.split("=")[1];
+
   const createCookie = () => {
-    if (
-      document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("status="))
-        ?.split("=")[1]
-    ) {
+    if (result) {
       console.log("cookie already set");
-      setIsLoggedIn(true);
     } else {
       console.log("cookie was not set yet, but now");
       document.cookie = "status=loggedIn; path=/; SameSite=None; Secure";
@@ -20,12 +19,7 @@ function App() {
   };
 
   const deleteCookie = () => {
-    if (
-      document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("status="))
-        ?.split("=")[1]
-    ) {
+    if (result) {
       document.cookie =
         "status=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       console.log("cookie deleted");
@@ -37,15 +31,8 @@ function App() {
   };
 
   useEffect(() => {
-    const result = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("status="))
-      ?.split("=")[1];
-
     result && setIsLoggedIn(true);
-  }, []);
-
-  console.log(isLoggedIn);
+  }, [result]);
 
   return (
     <div className="h-screen flex flex-col justify-center items-center">
