@@ -5,15 +5,19 @@ function App() {
 
   let result = document.cookie
     .split("; ")
-    .find((row) => row.startsWith("status="))
-    ?.split("=")[1];
+    .find((row) => row.startsWith("status="));
 
   const createCookie = () => {
     if (result) {
-      console.log("cookie already set");
+      return;
     } else {
-      console.log("cookie was not set yet, but now");
-      document.cookie = "status=loggedIn; path=/; SameSite=None; Secure";
+      const now = new Date();
+      const time = now.getTime();
+      const expireTime = time + 3600000;
+
+      now.setTime(expireTime);
+      document.cookie = `status=loggedIn; path=/; expires=${now.toUTCString()}`;
+
       setIsLoggedIn(true);
     }
   };
@@ -22,10 +26,8 @@ function App() {
     if (result) {
       document.cookie =
         "status=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      console.log("cookie deleted");
       setIsLoggedIn(false);
     } else {
-      console.log("cookie not found");
       setIsLoggedIn(false);
     }
   };
@@ -45,21 +47,23 @@ function App() {
         <button
           className="bg-black text-white p-2 rounded mt-10"
           onClick={createCookie}
+          id="createCookie"
         >
           <span>Create Cookie</span>
         </button>
         <button
           className="bg-black text-white p-2 rounded mt-10 ml-5"
           onClick={deleteCookie}
+          id="deleteCookie"
         >
           <span>Delete Cookie</span>
         </button>
       </div>
-      <div className="text-center mt-10 text-xl font-bold">
+      <div className="text-center mt-10 text-xl font-bold" id="statusText">
         {isLoggedIn ? (
-          <h1 className="text-green-800">You are logged in</h1>
+          <h1 className="text-green-800">You are authenticated!</h1>
         ) : (
-          <h1 className="text-red-800">You are not logged in</h1>
+          <h1 className="text-red-800">You are NOT authenticated</h1>
         )}
       </div>
     </div>
